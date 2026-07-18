@@ -2,8 +2,12 @@ import math
 import numpy as np 
 import pandas as pd
 import os
+from champions_league_poules import * 
+
 current_folder = os.path.dirname(__file__)
-csv_file1 = os.path.join(current_folder, "Matches.csv")
+project_folder = os.path.dirname(current_folder)
+
+csv_file1 = os.path.join(project_folder, "data", "Matches_clean.csv")
 
 df1 = pd.read_csv(csv_file1)
 
@@ -13,53 +17,52 @@ teams = sorted(pd.concat([df1["HomeTeam"], df1["AwayTeam"]]).unique())
 Goals_scored = 0
 teams_data = {}
 Goals_conceded = 0
-Totalgoals = df1["FTHome"].sum() + df1["FTAway"].sum()
-TotalAverage = Totalgoals / len(df1)
-ratings = {}
+Totalgoals = float(df1["FTHome"].sum() + df1["FTAway"].sum())
+TotalAverage = float(Totalgoals / len(df1))
+Info = {}
 
 
 def Goalsscored(team):
-        Goals_scored = 0
-        for index, row in teams_data[team].iterrows():
-            if row["HomeTeam"] == team:
-                Goals_scored += row["FTHome"]
-            else:
-                Goals_scored += row["FTAway"]
-        return Goals_scored
+    homegoals = float(df1.loc[df1["HomeTeam"] == team, "FTHome"].sum())
+    awaygoals = float(df1.loc[df1["AwayTeam"] == team, "FTAway"].sum())
+    return homegoals + awaygoals
+
 
 def Goalsconceded(team):
-    Goals_conceded = 0
-    for index, row in teams_data[team].iterrows():
-            if row["HomeTeam"] == team:
-                Goals_conceded += row["FTAway"]
-            else:
-                Goals_conceded += row["FTHome"]
-    return Goals_conceded
+    homeconceded = float(df1.loc[df1["HomeTeam"] == team, "FTAway"].sum())
+    awayconceded = float(df1.loc[df1["AwayTeam"] == team, "FTHome"].sum())
+    return homeconceded + awayconceded
 
 def Matches_played(team):
-    return len(teams_data[team])
+    return float(len(df1[(df1["HomeTeam"] == team) | (df1["AwayTeam"] == team)]))
 
 
-def Rating(team):
+def Statistics(team):
+    Matches = Matches_played(team)
     GS = Goalsscored(team)
     GC = Goalsconceded(team)
-    GS_pergame = (GS)/Matches_played(team)
-    GC_pergame = (GC)/Matches_played(team)
+    GS_pergame = (GS)/Matches
+    GC_pergame = (GC)/Matches
     Attack = GS_pergame / TotalAverage
     Defense = GC_pergame / TotalAverage
-    ratings[team] = {"Attack": Attack, "Defense": Defense}
-    return ratings[team]
+    Info[team] = {"Matches": Matches, "Scored": GS, "Scored_pergame": GS_pergame, "Conceded": GC, "Conceded_pergame": GC_pergame, "Attack_rating": Attack, "Defense_rating": Defense}
+    return Info[team]
 
-for team in teams:
-    Rating(team)
+for team in All_teams_1750:
+    Statistics(team)
+ 
 
-    
 def Parameter(team1, team2):
-    AttackTeam1 = ratings[team1]["Attack"]
-    DefenseTeam1 =  ratings[team1]["Defense"]
-    AttackTeam2 = ratings[team2]["Attack"]
-    DefenseTeam2 =  ratings[team2]["Defense"]
+    if team1 not in Info:
+        Statistics(team1)
+
+    if team2 not in Info:
+        Statistics(team2)
+    AttackTeam1 = Info[team1]["Attack_rating"]
+    DefenseTeam1 =  Info[team1]["Defense_rating"]
+    AttackTeam2 = Info[team2]["Attack_rating"]
+    DefenseTeam2 =  Info[team2]["Defense_rating"]
     ParameterTeam1 = TotalAverage * AttackTeam1 * DefenseTeam2
     ParameterTeam2 = TotalAverage * AttackTeam2 * DefenseTeam1
     return ParameterTeam1, ParameterTeam2
-    
+

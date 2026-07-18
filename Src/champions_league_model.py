@@ -1,9 +1,13 @@
 ### Champions league model 
+import importlib
+import datapart
+
+importlib.reload(datapart)
 import math
 import numpy as np 
 import pandas as pd
 from scipy.stats import poisson 
-from Datapart import Parameter 
+from datapart import *
 
 team1 = input("Voer het thuisteam in: ")
 team2 = input("Voer het uitteam in: ")
