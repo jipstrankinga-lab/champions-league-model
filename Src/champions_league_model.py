@@ -62,17 +62,18 @@ def update_table(table, hometeam, awayteam, home_goals, away_goals):
                 table[awayteam]["Pts"] += 1
     return table
 
-simulation()
 
-df_table = pd.DataFrame(table).T
-df_table = df_table.sort_values(
+
+def table_print(): 
+    simulation()
+    df_table = pd.DataFrame(table).T
+    df_table = df_table.sort_values(
     by=["Pts", "GD", "GS"],
-    ascending=False
-)
+    ascending=False)
+    df_table = df_table.reset_index()
+    df_table = df_table.rename(columns={"index": "Team"})
+    df_table.insert(0, "Pos", [f"{i}." for i in range(1, len(df_table) + 1)])
+    print(df_table.to_string(index=False))
 
-df_table = df_table.reset_index()
-df_table = df_table.rename(columns={"index": "Team"})
 
-df_table.insert(0, "Pos", [f"{i}." for i in range(1, len(df_table) + 1)])
-
-print(df_table.to_string(index=False))
+table_print()

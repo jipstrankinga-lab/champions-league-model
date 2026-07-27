@@ -9,6 +9,7 @@ project_folder = os.path.dirname(current_folder)
 csv_file = os.path.join(project_folder, "Data", "EloRatings_clean.csv")
 df = pd.read_csv(csv_file)
 
+
 df["club"] = df["club"].replace({"FC Kobenhavn": "FC Copenhagen", "Steaua": "FCSB"})
 df_1750 = (df[(df["elo"] > 1750) & (df["country"] != "RUS") & (df["club"] != "Recreativo")]
     .sort_values(by="elo", ascending=False)
