@@ -51,6 +51,7 @@ def Statistics(team):
 for team in All_teams_1750:
     Statistics(team)
  
+Elo_dict = df_1750.set_index("club")["elo"].to_dict()
 
 def Parameter(team1, team2):
     if team1 not in Info:
@@ -58,11 +59,15 @@ def Parameter(team1, team2):
 
     if team2 not in Info:
         Statistics(team2)
+    EloTeam1 = Elo_dict[team1]
+    EloTeam2 = Elo_dict[team2]
+    EloCorrection_home = -0.07 * (EloTeam2 - 1700)/100
+    EloCorrection_away = -0.05 * (EloTeam1 - 1700)/100
     AttackTeam1 = Info[team1]["Attack_rating"]
     DefenseTeam1 =  Info[team1]["Defense_rating"]
     AttackTeam2 = Info[team2]["Attack_rating"]
     DefenseTeam2 =  Info[team2]["Defense_rating"]
-    ParameterTeam1 = TotalAverage * AttackTeam1 * DefenseTeam2
-    ParameterTeam2 = TotalAverage * AttackTeam2 * DefenseTeam1
+    ParameterTeam1 = TotalAverage * AttackTeam1 * DefenseTeam2 + EloCorrection_home
+    ParameterTeam2 = TotalAverage * AttackTeam2 * DefenseTeam1 + EloCorrection_away
     return ParameterTeam1, ParameterTeam2
 
