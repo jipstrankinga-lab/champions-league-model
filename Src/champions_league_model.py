@@ -9,7 +9,6 @@ import pandas as pd
 from scipy.stats import poisson 
 from datapart import *
 from champions_league_poules import * 
-table = {}
 
 def simulate_games():
     unique_matches = set() # so duplicates will be removed automatically
@@ -22,6 +21,7 @@ def simulate_games():
 
 
 def champions_league_table(): 
+    table = {}
     for team in Selected_teams:
         table[team] = {"P": 0, "Pts": 0, "W": 0, "D": 0, "L": 0, "GS": 0, "GC": 0, "GD": 0}
     return table
@@ -65,7 +65,7 @@ def update_table(table, hometeam, awayteam, home_goals, away_goals):
 
 
 def table_print(): 
-    simulation()
+    table = simulation()
     df_table = pd.DataFrame(table).T
     df_table = df_table.sort_values(
     by=["Pts", "GD", "GS"],
@@ -77,3 +77,11 @@ def table_print():
 
 
 table_print()
+
+
+
+
+
+
+
+

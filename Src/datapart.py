@@ -19,8 +19,8 @@ teams_data = {}
 Goals_conceded = 0
 Totalgoals = float(df1["FTHome"].sum() + df1["FTAway"].sum())
 TotalAverage = float(Totalgoals / len(df1))
+TotalAverage_perTeam = TotalAverage / 2
 Info = {}
-
 
 def Goalsscored(team):
     homegoals = float(df1.loc[df1["HomeTeam"] == team, "FTHome"].sum())
@@ -43,8 +43,8 @@ def Statistics(team):
     GC = Goalsconceded(team)
     GS_pergame = (GS)/Matches
     GC_pergame = (GC)/Matches
-    Attack = GS_pergame / TotalAverage
-    Defense = GC_pergame / TotalAverage
+    Attack = GS_pergame / TotalAverage_perTeam
+    Defense = GC_pergame / TotalAverage_perTeam
     Info[team] = {"Matches": Matches, "Scored": GS, "Scored_pergame": GS_pergame, "Conceded": GC, "Conceded_pergame": GC_pergame, "Attack_rating": Attack, "Defense_rating": Defense}
     return Info[team]
 
@@ -67,7 +67,7 @@ def Parameter(team1, team2):
     DefenseTeam1 =  Info[team1]["Defense_rating"]
     AttackTeam2 = Info[team2]["Attack_rating"]
     DefenseTeam2 =  Info[team2]["Defense_rating"]
-    ParameterTeam1 = TotalAverage * AttackTeam1 * DefenseTeam2 + EloCorrection_home
-    ParameterTeam2 = TotalAverage * AttackTeam2 * DefenseTeam1 + EloCorrection_away
+    ParameterTeam1 = TotalAverage_perTeam * AttackTeam1 * DefenseTeam2 + EloCorrection_home
+    ParameterTeam2 = TotalAverage_perTeam * AttackTeam2 * DefenseTeam1 + EloCorrection_away
     return ParameterTeam1, ParameterTeam2
 
